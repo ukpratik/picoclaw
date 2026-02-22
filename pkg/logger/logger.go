@@ -37,7 +37,14 @@ var (
 )
 
 type Logger struct {
-	file    *os.File
+	file *os.File
+
+	// writeMu serializes file writes.
+	// Although POSIX systems typically guarantee atomicity
+	// for single write() syscalls on regular files,
+	// Windows and some filesystems may not.
+	//
+	// This prevents log line interleaving across platforms.
 	writeMu sync.Mutex
 }
 
@@ -119,7 +126,6 @@ func logMessage(level LogLevel, component string, message string, fields map[str
 
 	mu.RLock()
 	fileptr := logger.file
-	mu.RUnlock()
 
 	if fileptr != nil {
 		jsonData, err := json.Marshal(entry)
@@ -132,6 +138,7 @@ func logMessage(level LogLevel, component string, message string, fields map[str
 			}
 		}
 	}
+	mu.RUnlock()
 
 	var fieldStr string
 	if len(fields) > 0 {

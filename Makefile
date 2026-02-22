@@ -133,6 +133,11 @@ vet:
 test:
 	@$(GO) test ./...
 
+## test-race: Test Go code with race detector
+test-race:
+	@$(GO) test -race -count=1 ./pkg/logger
+
+
 ## fmt: Format Go code
 fmt:
 	@$(GOLANGCI_LINT) fmt
