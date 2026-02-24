@@ -143,6 +143,8 @@ func logMessage(level LogLevel, component string, message string, fields map[str
 	var fieldStr string
 	if len(fields) > 0 {
 		fieldStr = " " + formatFields(fields)
+	} else {
+		fieldStr = ""
 	}
 
 	logLine := fmt.Sprintf("[%s] [%s]%s %s%s",
